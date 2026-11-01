@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>北京潞恒古钱币评级工作室 - 藏品查询</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        mainRed: '#c81623',
+                        darkText: '#333333',
+                        grayText: '#666666',
+                        borderGray: '#e5e5e5'
+                    },
+                    fontFamily: {
+                        sans: ["Microsoft YaHei", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .btn-red {
+                background-color: #c81623;
+            }
+            .btn-red:hover {
+                background-color: #b01420;
+            }
+        }
+    </style>
+</head>
+<body class="bg-white text-darkText">
+
+    <!-- 顶部红底标题栏 -->
+    <header class="bg-mainRed text-white shadow-sm">
+        <div class="max-w-5xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <i class="fa fa-coin text-white text-2xl"></i>
+                <h1 class="text-xl font-bold">北京潞恒古钱币评级工作室</h1>
+            </div>
+            <a href="admin.html" class="bg-white text-mainRed px-3 py-1.5 rounded hover:bg-gray-100">管理员系统</a>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-4 py-12">
+
+        <!-- 查询区域 -->
+        <div class="text-center mb-10">
+            <h2 class="text-[clamp(1.5rem,3vw,2rem)] font-bold text-mainRed mb-3">评级藏品信息查询</h2>
+            <p class="text-grayText">请输入评级编号核验藏品档案</p>
+        </div>
+
+        <div class="border border-borderGray rounded-lg p-6 md:p-8 shadow-sm mb-16">
+            <div class="flex flex-col sm:flex-row gap-4">
+                <input id="queryCode" type="text" placeholder="请输入评级编号"
+                    class="flex-1 border border-borderGray px-4 py-3 rounded outline-none focus:border-mainRed">
+                <button onclick="searchCoin()" class="btn-red text-white px-8 py-3 rounded">
+                    <i class="fa fa-search mr-1"></i> 查询
+                </button>
+            </div>
+
+            <div id="resultBox" class="mt-8 hidden">
+                <hr class="border-borderGray my-6">
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div>
+                        <img id="coinImg" src="" alt="钱币图片" class="w-full border border-borderGray rounded">
+                    </div>
+                    <div class="space-y-3">
+                        <div><span class="text-mainRed font-medium">评级编号：</span><span id="r-code"></span></div>
+                        <div><span class="text-mainRed font-medium">钱币名称：</span><span id="r-name"></span></div>
+                        <div><span class="text-mainRed font-medium">朝代：</span><span id="r-dynasty"></span></div>
+                        <div><span class="text-mainRed font-medium">版别：</span><span id="r-type"></span></div>
+                        <div><span class="text-mainRed font-medium">评级分数：</span><span id="r-score"></span></div>
+                        <div><span class="text-mainRed font-medium">材质：</span><span id="r-material"></span></div>
+                        <div><span class="text-mainRed font-medium">瑕疵代码：</span><span id="r-defect"></span></div>
+                        <div><span class="text-mainRed font-medium">备注：</span><span id="r-note"></span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="emptyTip" class="mt-8 text-center text-grayText hidden">
+                <i class="fa fa-exclamation-circle text-xl"></i>
+                <p class="mt-2">未查询到该编号藏品，请核对编号是否正确</p>
+            </div>
+        </div>
+
+        <!-- 铜钱评级标准 + 瑕疵代码说明 -->
+        <div class="border border-borderGray rounded-lg p-6 md:p-8 shadow-sm">
+            <h3 class="text-xl font-bold text-mainRed mb-6 text-center">古钱币铜钱评级参考标准</h3>
+
+            <div class="space-y-4 text-sm leading-relaxed">
+                <div><strong class="text-mainRed">90分（极美品）：</strong>钱币无磕碰、无修补、无裂漏，字口清晰深峻，底板平整，包浆自然老道，几乎无流通磨损，品相完美。</div>
+                <div><strong class="text-mainRed">88分（美+）：</strong>整体状态优秀，字口清晰，底板平整，仅有极轻微自然流通痕迹，无硬伤，包浆自然。</div>
+                <div><strong class="text-mainRed">85分（美品）：</strong>字口清晰，底板尚可，轻微流通磨损，无裂、无修补、无明显磕碰，无影响品相的硬伤。</div>
+                <div><strong class="text-mainRed">82分（上美）：</strong>有正常流通磨损，部分笔画略浅，无裂无补，无严重磕碰，整体完整。</div>
+                <div><strong class="text-mainRed">80分（上品）：</strong>流通痕迹明显，字口有磨损，无裂、无修补，无破坏性损伤，钱币形制完整。</div>
+                <div><strong class="text-mainRed">75分（中上）：</strong>磨损较重，部分文字漫漶，无裂无补，无缺肉，可清晰识别版别。</div>
+                <div><strong class="text-mainRed">70分（中品）：</strong>磨损严重，文字大多浅平，无裂、无修补，钱币本体完整。</div>
+            </div>
+
+            <hr class="my-6 border-borderGray">
+
+            <h4 class="text-lg font-bold text-mainRed mb-4">瑕疵代码说明</h4>
+
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm">
+                <div><strong>01：</strong>裂纹</div>
+                <div><strong>02：</strong>穿孔 / 沙眼</div>
+                <div><strong>03：</strong>修补</div>
+                <div><strong>04：</strong>磕碰 / 缺肉</div>
+                <div><strong>05：</strong>翘曲变形</div>
+                <div><strong>06：</strong>水洗</div>
+                <div><strong>07：</strong>酸洗</div>
+                <div><strong>08：</strong>磨字 / 修刻</div>
+                <div><strong>09：</strong>包浆异常</div>
+                <div><strong>10：</strong>人为处理</div>
+                <div><strong>11：</strong>铸造缺陷</div>
+                <div><strong>12：</strong>其他瑕疵</div>
+            </div>
+
+            <div class="mt-4 text-sm">
+                <strong class="text-mainRed">参考说明：</strong>存在裂、漏、翘、大面积修补、人为酸洗除锈、人工改刻等情况，一般不予高分，视瑕疵程度标注对应数字代码。
+            </div>
+
+            <hr class="my-6 border-borderGray">
+            <h4 class="text-lg font-bold text-mainRed mb-2">收评范围</h4>
+            <div id="scopeText" class="text-sm"></div>
+
+            <hr class="my-6 border-borderGray">
+            <h4 class="text-lg font-bold text-mainRed mb-2">评级收费须知</h4>
+            <div id="feeText" class="text-sm"></div>
+        </div>
+
+    </main>
+
+    <footer class="border-t border-borderGray mt-12 py-6 text-center text-grayText text-sm">
+        <p>© 2026 北京潞恒古钱币评级工作室 版权所有</p>
+    </footer>
+
+    <script>
+        // 加载收评范围、收费说明
+        function loadScope(){
+            let scope = localStorage.getItem('lh-scope')
+            if(!scope) scope = "本工作室仅收评北宋钱币"
+            document.getElementById('scopeText').innerText = scope
+        }
+        function loadFeeInfo(){
+            let fee = localStorage.getItem('lh-fee')
+            if(!fee) fee = "评级价格：限时特价12.8元/枚。无论钱币真假均需收取评级费用，寄回采用顺丰到付，来回运费自理。"
+            document.getElementById('feeText').innerText = fee
+        }
+        loadScope()
+        loadFeeInfo()
+
+        function searchCoin(){
+            const code = document.getElementById('queryCode').value.trim();
+            const box = document.getElementById('resultBox');
+            const tip = document.getElementById('emptyTip');
+            const list = JSON.parse(localStorage.getItem('lh-coins') || '[]');
+            const item = list.find(x => x.code === code);
+
+            if(item){
+                box.classList.remove('hidden');
+                tip.classList.add('hidden');
+                document.getElementById('coinImg').src = item.img || '';
+                document.getElementById('r-code').innerText = item.code || '';
+                document.getElementById('r-name').innerText = item.name || '';
+                document.getElementById('r-dynasty').innerText = item.dynasty || '';
+                document.getElementById('r-type').innerText = item.type || '';
+                document.getElementById('r-score').innerText = item.score || '';
+                document.getElementById('r-material').innerText = item.material || '';
+                document.getElementById('r-defect').innerText = item.defect || '无';
+                document.getElementById('r-note').innerText = item.note || '';
+            }else{
+                box.classList.add('hidden');
+                tip.classList.remove('hidden');
+            }
+        }
+    </script>
+
+</body>
+</html>
