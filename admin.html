@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理员后台 | 北京潞恒古钱币评级工作室</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        mainRed: '#c81623',
+                        darkText: '#333333',
+                        grayText: '#666666',
+                        borderGray: '#e5e5e5'
+                    },
+                    fontFamily: {
+                        sans: ["Microsoft YaHei", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .btn-red {
+                background-color: #c81623;
+            }
+            .btn-red:hover {
+                background-color: #b01420;
+            }
+        }
+    </style>
+</head>
+<body class="bg-white text-darkText">
+
+    <header class="bg-mainRed text-white shadow-sm">
+        <div class="max-w-5xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <i class="fa fa-coin text-white text-2xl"></i>
+                <h1 class="text-xl font-bold">藏品后台管理</h1>
+            </div>
+            <a href="index.html" class="text-white hover:text-gray-200">返回查询首页</a>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-4 py-10">
+
+        <!-- 登录面板 -->
+        <div id="loginPanel" class="border border-borderGray rounded-lg p-8 shadow-sm max-w-md mx-auto">
+            <h3 class="text-lg font-bold text-mainRed mb-6 text-center">管理员登录</h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm text-grayText mb-1">管理员账号</label>
+                    <input id="adminUser" type="text" class="w-full border border-borderGray px-3 py-2 rounded outline-none focus:border-mainRed">
+                </div>
+                <div>
+                    <label class="block text-sm text-grayText mb-1">登录密码</label>
+                    <input id="adminPwd" type="password" class="w-full border border-borderGray px-3 py-2 rounded outline-none focus:border-mainRed">
+                </div>
+                <button onclick="loginCheck()" class="btn-red text-white w-full py-2 rounded">登录</button>
+            </div>
+        </div>
+
+        <!-- 后台管理面板 -->
+        <div id="managePanel" class="hidden">
+            <!-- 收评范围设置 -->
+            <div class="border border-borderGray rounded-lg p-6 shadow-sm mb-6">
+                <h3 class="text-lg font-bold text-mainRed mb-4">收评范围设置（首页同步展示）</h3>
+                <div class="flex gap-4">
+                    <input id="scopeInput" type="text" class="flex-1 border border-borderGray px-3 py-2 rounded outline-none focus:border-mainRed" placeholder="例如：本工作室仅收评北宋钱币">
+                    <button onclick="saveScope()" class="btn-red text-white px-5 py-2 rounded">保存范围</button>
+                </div>
+            </div>
+
+            <!-- 收费须知设置 -->
+            <div class="border border-borderGray rounded-lg p-6 shadow-sm mb-8">
+                <h3 class="text-lg font-bold text-mainRed mb-4">评级收费须知设置（首页同步展示）</h3>
+                <textarea id="feeInput" rows="3" class="w-full border border-borderGray px-3 py-2 rounded outline-none focus:border-mainRed" placeholder="填写收费、运费相关说明"></textarea>
+                <div class="mt-3">
+                    <button onclick="saveFee()" class="btn-red text-white px-5 py-2 rounded">保存收费说明</button>
+                </div>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-8">
+
+                <!-- 录入/修改表单 -->
+                <div class="border border-borderGray rounded-lg p-6 shadow-sm">
+                    <h3 class="text-lg font-bold text-mainRed mb-5">藏品录入 / 修改</h3>
+                    <input type="hidden" id="editId">
+
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm text-grayText mb-1">评级编号（唯一）</label>
+                            <input id="code" type="text" class="w-full border border-borderGray px-3 py-2 rounded outline-none focus:border-mainRed">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm text-grayText mb-1">钱币名称</label>
+                            <input id="name" type="text" class="w-full border border-borderGray px-3 py-2 rounded outline-none focus:border-mainRed">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm text-grayText mb-1">朝代</label>
+                            <input id="dynasty" type="text" class="w-full border border-borderGray px-3 py-2 rounded outline-none focus:border-mainRed">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm text-grayText mb-1">版别</label>
+                            <input id="type" type="text" class="w-full border border-borderGray px-3 py-2 rounded outline-none focus:border-mainRed">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm text-grayText mb-1">评级分数</label>
+                            <input id="score" type="text" class="w-full border border-borderGray px-3 py-2 rounded outline-none focus:border-mainRed">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm text-grayText mb-1">材质</label>
+                            <input id="material" type="text" class="w-full border border-borderGray px-3 py-2 rounded outline-none focus:border-mainRed">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm text-grayText mb-1">瑕疵代码</label>
+                            <input id="defect" type="text" placeholder="例：03、04、05" class="w-full border border-borderGray px-3 py-2 rounded outline-none focus:border-mainRed">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm text-grayText mb-1">钱币图片</label>
+                            <input id="imgUpload" type="file" accept="image/*">
+                            <img id="preview" class="mt-3 max-h-36 border border-borderGray rounded hidden">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm text-grayText mb-1">备注说明</label>
+                            <textarea id="note" rows="3" class="w-full border border-borderGray px-3 py-2 rounded outline-none focus:border-mainRed"></textarea>
+                        </div>
+
+                        <div class="flex gap-3 pt-2">
+                            <button onclick="saveItem()" class="btn-red text-white px-5 py-2 rounded">保存</button>
+                            <button onclick="resetForm()" class="bg-gray-400 text-white px-5 py-2 rounded hover:bg-gray-500">清空</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 藏品列表 -->
+                <div class="border border-borderGray rounded-lg p-6 shadow-sm">
+                    <h3 class="text-lg font-bold text-mainRed mb-5">已登记藏品列表</h3>
+                    <div id="listBox" class="space-y-3 max-h-[550px] overflow-y-auto pr-1"></div>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="border-t border-borderGray mt-10 py-6 text-center text-grayText text-sm">
+        <p>© 2026 北京潞恒古钱币评级工作室 版权所有</p>
+    </footer>
+
+    <script>
+        const adminUsers = [
+            { user: "lhbj110", pwd: "lhbj12345678" },
+            { user: "lhhb130", pwd: "lhbj12345678" }
+        ];
+
+        let imgBase64 = "";
+
+        // 收评范围读写
+        function loadScopeInput(){
+            let s = localStorage.getItem('lh-scope')
+            if(!s) s = "本工作室仅收评北宋钱币"
+            document.getElementById('scopeInput').value = s
+        }
+        function saveScope(){
+            const val = document.getElementById('scopeInput').value.trim()
+            if(!val){
+                alert("收评范围不能为空！")
+                return
+            }
+            localStorage.setItem('lh-scope', val)
+            alert('收评范围保存成功，首页刷新即可看到！')
+        }
+
+        // 收费须知读写
+        function loadFeeInput(){
+            let f = localStorage.getItem('lh-fee')
+            if(!f) f = "评级价格：限时特价12.8元/枚。无论钱币真假均需收取评级费用，寄回采用顺丰到付，来回运费自理。"
+            document.getElementById('feeInput').value = f
+        }
+        function saveFee(){
+            const val = document.getElementById('feeInput').value.trim()
+            if(!val){
+                alert("收费说明不能为空！")
+                return
+            }
+            localStorage.setItem('lh-fee', val)
+            alert('收费须知保存成功，首页刷新即可看到！')
+        }
+
+        function loginCheck(){
+            const u = document.getElementById('adminUser').value.trim();
+            const p = document.getElementById('adminPwd').value.trim();
+            const ok = adminUsers.find(item => item.user === u && item.pwd === p);
+
+            if(ok){
+                document.getElementById('loginPanel').classList.add('hidden');
+                document.getElementById('managePanel').classList.remove('hidden');
+                loadScopeInput()
+                loadFeeInput()
+                renderList();
+            }else{
+                alert('账号或者密码错误！');
+            }
+        }
+
+        document.getElementById('imgUpload').onchange = function(e){
+            const file = e.target.files[0];
+            if(!file) return;
+
+            const reader = new FileReader();
+            reader.onload = ev => {
+                imgBase64 = ev.target.result;
+                document.getElementById('preview').src = imgBase64;
+                document.getElementById('preview').classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        };
+
+        function getList(){
+            return JSON.parse(localStorage.getItem('lh-coins') || '[]');
+        }
+
+        function saveList(arr){
+            localStorage.setItem('lh-coins', JSON.stringify(arr));
+        }
+
+        function renderList(){
+            const arr = getList();
+            const box = document.getElementById('listBox');
+            box.innerHTML = "";
+
+            arr.forEach((item, idx) => {
+                const div = document.createElement('div');
+                div.className = "border border-borderGray p-3 rounded flex justify-between items-center";
+                div.innerHTML = `
+                    <div>
+                        <div class="text-mainRed font-medium">${item.code || ''}</div>
+                        <div class="text-sm text-grayText">${item.name || ''}</div>
+                        <div class="text-xs text-grayText">瑕疵：${item.defect || '无'}</div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="editItem(${idx})" class="px-3 py-1 bg-blue-500 text-white rounded text-sm">编辑</button>
+                        <button onclick="delItem(${idx})" class="px-3 py-1 bg-red-600 text-white rounded text-sm">删除</button>
+                    </div>
+                `;
+                box.appendChild(div);
+            });
+        }
+
+        function saveItem(){
+            const code = document.getElementById('code').value.trim();
+
+            if(!code){
+                alert('请填写评级编号');
+                return;
+            }
+
+            const obj = {
+                code: code,
+                name: document.getElementById('name').value.trim(),
+                dynasty: document.getElementById('dynasty').value.trim(),
+                type: document.getElementById('type').value.trim(),
+                score: document.getElementById('score').value.trim(),
+                material: document.getElementById('material').value.trim(),
+                defect: document.getElementById('defect').value.trim(),
+                img: imgBase64,
+                note: document.getElementById('note').value.trim()
+            };
+
+            const arr = getList();
+            const editId = document.getElementById('editId').value;
+
+            if(editId !== ""){
+                arr[editId] = obj;
+            }else{
+                const find = arr.find(x => x.code === code);
+                if(find){
+                    alert('该编号已经存在！');
+                    return;
+                }
+                arr.push(obj);
+            }
+
+            saveList(arr);
+            resetForm();
+            renderList();
+            alert('保存成功！');
+        }
+
+        function editItem(i){
+            const arr = getList();
+            const item = arr[i];
+
+            document.getElementById('editId').value = i;
+            document.getElementById('code').value = item.code || '';
+            document.getElementById('name').value = item.name || '';
+            document.getElementById('dynasty').value = item.dynasty || '';
+            document.getElementById('type').value = item.type || '';
+            document.getElementById('score').value = item.score || '';
+            document.getElementById('material').value = item.material || '';
+            document.getElementById('defect').value = item.defect || '';
+            document.getElementById('note').value = item.note || '';
+
+            imgBase64 = item.img || "";
+            if(item.img){
+                document.getElementById('preview').src = item.img;
+                document.getElementById('preview').classList.remove('hidden');
+            }else{
+                document.getElementById('preview').classList.add('hidden');
+            }
+        }
+
+        function delItem(i){
+            if(!confirm('确定删除这条记录？')) return;
+
+            const arr = getList();
+            arr.splice(i, 1);
+            saveList(arr);
+            renderList();
+        }
+
+        function resetForm(){
+            document.getElementById('editId').value = "";
+            document.getElementById('code').value = "";
+            document.getElementById('name').value = "";
+            document.getElementById('dynasty').value = "";
+            document.getElementById('type').value = "";
+            document.getElementById('score').value = "";
+            document.getElementById('material').value = "";
+            document.getElementById('defect').value = "";
+            document.getElementById('note').value = "";
+            document.getElementById('imgUpload').value = "";
+
+            imgBase64 = "";
+            document.getElementById('preview').classList.add('hidden');
+        }
+
+        // 页面加载自动读取
+        loadScopeInput()
+        loadFeeInput()
+    </script>
+
+</body>
+</html>
